@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-electric-blue: #007BFF;
+  --color-emerald-green: #10B981;
+  --color-crimson-red: #EF4444;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-slate-100 font-sans antialiased m-0 p-0;
+  }
+}
