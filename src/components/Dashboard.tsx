@@ -41,9 +41,9 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-3 md:p-6 font-sans selection:bg-blue-500/30">
       <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
-      
+
       <div className="max-w-6xl mx-auto space-y-5">
-        
+
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-xl gap-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
@@ -60,7 +60,7 @@ export const Dashboard: React.FC = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3 relative z-10">
             <button
               onClick={() => setIsHelpOpen(true)}
@@ -81,8 +81,8 @@ export const Dashboard: React.FC = () => {
 
         {/* Practice Question Generator */}
         <section>
-          <QuestionComponent 
-            question={activeQuestion} 
+          <QuestionComponent
+            question={activeQuestion}
             onGenerate={generateNewQuestion}
             onClear={clearQuestion}
           />
@@ -95,18 +95,18 @@ export const Dashboard: React.FC = () => {
               Target IP Address
               <InfoTooltip content="Manually type an IP address here. The visual matrix and calculator will instantly update based on the class of this address." />
             </h2>
-            
+
             <div className="flex items-center gap-3 w-full justify-center">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={ipInput}
                 onChange={handleIpChange}
                 className="w-full max-w-[280px] sm:max-w-[340px] text-center bg-slate-900/50 border border-slate-700 hover:border-slate-500 focus:border-blue-500 rounded-xl text-3xl sm:text-4xl font-black font-mono text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] tracking-tight outline-none transition-all py-2"
                 placeholder="0.0.0.0"
               />
               <div className="hidden sm:flex flex-col items-center justify-center bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-2 gap-0.5">
-                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">Class</span>
-                 <span className="text-blue-400 text-2xl font-black leading-none drop-shadow-[0_0_8px_rgba(0,123,255,0.3)]">{calc.ipClass}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">Class</span>
+                <span className="text-blue-400 text-2xl font-black leading-none drop-shadow-[0_0_8px_rgba(0,123,255,0.3)]">{calc.ipClass}</span>
               </div>
             </div>
 
@@ -138,7 +138,7 @@ export const Dashboard: React.FC = () => {
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
           <div className="xl:col-span-2 relative">
             <div className="absolute top-4 right-4 z-10 flex">
-              <InfoTooltip content="Click individual bits to toggle. Purple bits represent the Network portion dictated by your prefix length. Gray/white bits represent hosts." />
+              <InfoTooltip content="Click individual bits to toggle. Blue bits represent the Network portion dictated by your prefix length. Red bits represent hosts." />
             </div>
             <BinaryMatrix bits={bits} cidr={cidr} onToggle={toggleBit} />
           </div>
@@ -156,7 +156,7 @@ export const Dashboard: React.FC = () => {
         <section className="relative">
           <ValidationZone key={activeQuestion ? activeQuestion.id : 'calc'} calc={activeCalc} />
         </section>
-        
+
       </div>
     </div>
   );
