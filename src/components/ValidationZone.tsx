@@ -19,6 +19,8 @@ export const ValidationZone: React.FC<ValidationZoneProps> = ({ calc }) => {
   const [firstStatus, setFirstStatus] = useState<ValidationStatus>('idle');
   const [lastStatus, setLastStatus] = useState<ValidationStatus>('idle');
 
+  const [showAnswers, setShowAnswers] = useState(false);
+
   const handleConfirm = () => {
     setNetStatus(network.trim() === calc.networkString ? 'success' : 'error');
     setBroadStatus(broadcast.trim() === calc.broadcastString ? 'success' : 'error');
@@ -35,6 +37,7 @@ export const ValidationZone: React.FC<ValidationZoneProps> = ({ calc }) => {
     setBroadStatus('idle');
     setFirstStatus('idle');
     setLastStatus('idle');
+    setShowAnswers(false);
   };
 
   const getBorderColor = (status: ValidationStatus) => {
@@ -119,10 +122,37 @@ export const ValidationZone: React.FC<ValidationZoneProps> = ({ calc }) => {
         </div>
       </div>
 
-      <div className="flex mt-2">
+      {showAnswers && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-900/50 border border-slate-700/50 rounded-lg mt-2 font-mono text-sm">
+          <div>
+            <span className="text-slate-500 block text-xs uppercase mb-1">Network</span>
+            <span className="text-emerald-400">{calc.networkString}</span>
+          </div>
+          <div>
+            <span className="text-slate-500 block text-xs uppercase mb-1">Broadcast</span>
+            <span className="text-emerald-400">{calc.broadcastString}</span>
+          </div>
+          <div>
+            <span className="text-slate-500 block text-xs uppercase mb-1">First Usable</span>
+            <span className="text-emerald-400">{calc.firstUsableString}</span>
+          </div>
+          <div>
+            <span className="text-slate-500 block text-xs uppercase mb-1">Last Usable</span>
+            <span className="text-emerald-400">{calc.lastUsableString}</span>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row gap-3 mt-2">
+        <button
+          onClick={() => setShowAnswers(!showAnswers)}
+          className="w-full sm:w-1/3 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3.5 px-4 rounded-lg transition-all text-sm border border-slate-600"
+        >
+          {showAnswers ? 'Hide Answers' : 'Reveal Answers'}
+        </button>
         <button
           onClick={handleConfirm}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-4 rounded-lg transition-all shadow-[0_0_15px_rgba(0,123,255,0.4)] hover:shadow-[0_0_20px_rgba(0,123,255,0.6)] active:translate-y-0.5 text-lg"
+          className="w-full sm:w-2/3 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-4 rounded-lg transition-all shadow-[0_0_15px_rgba(0,123,255,0.4)] hover:shadow-[0_0_20px_rgba(0,123,255,0.6)] active:translate-y-0.5 text-lg"
         >
           Confirm Answers
         </button>
