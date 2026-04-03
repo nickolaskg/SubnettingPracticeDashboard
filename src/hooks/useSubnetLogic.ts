@@ -15,15 +15,7 @@ export interface SubnetCalculations {
   minCidr: number;
 }
 
-// Default to 192.168.1.0 (Class C)
-const defaultBits: Bit[] = [
-  ...[1, 1, 0, 0, 0, 0, 0, 0], // 192 (128+64)
-  ...[1, 0, 1, 0, 1, 0, 0, 0], // 168 (128+32+8)
-  ...[0, 0, 0, 0, 0, 0, 0, 1], // 1
-  ...[0, 0, 0, 0, 0, 0, 0, 0]  // 0
-] as Bit[];
-
-function bitsToOctets(bits: Bit[]): number[] {
+export function bitsToOctets(bits: Bit[]): number[] {
   const octets = [];
   for (let i = 0; i < 4; i++) {
     const chunk = bits.slice(i * 8, (i + 1) * 8);
@@ -32,14 +24,30 @@ function bitsToOctets(bits: Bit[]): number[] {
   return octets;
 }
 
-function octetsToString(octets: number[]): string {
+export function octetsToString(octets: number[]): string {
   return octets.join('.');
 }
 
-export function useSubnetLogic() {
-  const [bits, setBits] = useState<Bit[]>(defaultBits);
-  const [cidr, setCidr] = useState<number>(24);
+export function ipStringToBits(ip: string): Bit[] {
+  const parts = ip.split('.');
+  const newBits: Bit[] = [];
+  if (parts.length === 4) {
+    const parsed = parts.map(p => parseInt(p, 10));
+    if (parsed.every(n => !isNaN(n) && n >= 0 && n <= 255)) {
+      parsed.forEach(n => {
+        const binStr = n.toString(2).padStart(8, '0');
+        for (let i = 0; i < 8; i++) {
+          newBits.push(parseInt(binStr[i], 10) as Bit);
+        }
+      });
+      return newBits;
+    }
+  }
+  // fallback
+  return Array(32).fill(0) as Bit[];
+}
 
+export function calculateSubnetDetails(bits: Bit[], cidr: number): SubnetCalculations {
   // 1. Derive Class and Minimum CIDR
   const firstOctet = parseInt(bits.slice(0, 8).join(''), 2);
   let ipClass: 'A' | 'B' | 'C' | 'D/E' = 'C';
@@ -58,43 +66,6 @@ export function useSubnetLogic() {
     ipClass = 'D/E';
     minCidr = 24;
   }
-
-  // Ensure CIDR does not go below class boundaries
-  useEffect(() => {
-    if (cidr < minCidr) {
-      setCidr(minCidr);
-    }
-  }, [bits, cidr, minCidr]);
-
-  const toggleBit = (index: number) => {
-    setBits((prev) => {
-      const next = [...prev];
-      next[index] = next[index] === 1 ? 0 : 1;
-      return next;
-    });
-  };
-
-  const reset = () => {
-    setBits(defaultBits);
-    setCidr(24);
-  };
-
-  const setIpFromString = (ip: string) => {
-    const parts = ip.split('.');
-    if (parts.length === 4) {
-      const parsed = parts.map(p => parseInt(p, 10));
-      if (parsed.every(n => !isNaN(n) && n >= 0 && n <= 255)) {
-        const newBits: Bit[] = [];
-        parsed.forEach(n => {
-          const binStr = n.toString(2).padStart(8, '0');
-          for (let i = 0; i < 8; i++) {
-            newBits.push(parseInt(binStr[i], 10) as Bit);
-          }
-        });
-        setBits(newBits);
-      }
-    }
-  };
 
   // 2. Perform Mathematical Calculations
   const ipOctets = bitsToOctets(bits);
@@ -132,7 +103,7 @@ export function useSubnetLogic() {
     lastUsableString = octetsToString(bitsToOctets(lastBits as Bit[]));
   }
 
-  const calc: SubnetCalculations = {
+  return {
     ipString,
     submaskString,
     networkString,
@@ -143,6 +114,46 @@ export function useSubnetLogic() {
     magicNumberOctet,
     ipClass,
     minCidr
+  };
+}
+
+// Default to 192.168.1.0 (Class C)
+const defaultBits: Bit[] = ipStringToBits('192.168.1.0');
+
+export function useSubnetLogic() {
+  const [bits, setBits] = useState<Bit[]>(defaultBits);
+  const [cidr, setCidr] = useState<number>(24);
+
+  const calc = calculateSubnetDetails(bits, cidr);
+
+  // Ensure CIDR does not go below class boundaries
+  useEffect(() => {
+    if (cidr < calc.minCidr) {
+      setCidr(calc.minCidr);
+    }
+  }, [bits, cidr, calc.minCidr]);
+
+  const toggleBit = (index: number) => {
+    setBits((prev) => {
+      const next = [...prev];
+      next[index] = next[index] === 1 ? 0 : 1;
+      return next;
+    });
+  };
+
+  const reset = () => {
+    setBits(defaultBits);
+    setCidr(24);
+  };
+
+  const setIpFromString = (ip: string) => {
+    const parts = ip.split('.');
+    if (parts.length === 4) {
+      const parsed = parts.map(p => parseInt(p, 10));
+      if (parsed.every(n => !isNaN(n) && n >= 0 && n <= 255)) {
+        setBits(ipStringToBits(ip));
+      }
+    }
   };
 
   return {

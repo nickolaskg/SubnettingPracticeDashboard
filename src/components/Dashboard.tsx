@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSubnetLogic } from '../hooks/useSubnetLogic';
+import { useQuestionGenerator } from '../hooks/useQuestionGenerator';
 import { BinaryMatrix } from './BinaryMatrix';
 import { CidrSlider } from './CidrSlider';
 import { ValidationZone } from './ValidationZone';
+import { QuestionComponent } from './QuestionComponent';
 import { Network, RefreshCw } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
   const { bits, cidr, setCidr, toggleBit, setIpFromString, reset, calc } = useSubnetLogic();
+  const { activeQuestion, generateNewQuestion, clearQuestion } = useQuestionGenerator();
 
   const [ipInput, setIpInput] = useState(calc.ipString);
 
@@ -20,6 +23,8 @@ export const Dashboard: React.FC = () => {
     setIpInput(val);
     setIpFromString(val); // only updates bits if valid
   };
+
+  const activeCalc = activeQuestion ? activeQuestion.expectedCalc : calc;
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-3 md:p-6 font-sans selection:bg-blue-500/30">
@@ -50,6 +55,15 @@ export const Dashboard: React.FC = () => {
             Reset
           </button>
         </header>
+
+        {/* Practice Question Generator */}
+        <section>
+          <QuestionComponent 
+            question={activeQuestion} 
+            onGenerate={generateNewQuestion}
+            onClear={clearQuestion}
+          />
+        </section>
 
         {/* Real-time Result Overview */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -101,7 +115,7 @@ export const Dashboard: React.FC = () => {
 
         {/* Practice Validation */}
         <section>
-          <ValidationZone calc={calc} />
+          <ValidationZone calc={activeCalc} />
         </section>
         
       </div>
