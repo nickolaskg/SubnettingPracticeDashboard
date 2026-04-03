@@ -41,7 +41,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             <ul className="space-y-2 text-sm text-slate-400 ml-5 list-disc">
               <li><strong>Target IP:</strong> Enter any valid IPv4 address. The tool will automatically assign its theoretical bounds based on its class (A, B, or C).</li>
               <li><strong>CIDR Slider:</strong> Slide the prefix length to define how many bits belong to the network versus the host.</li>
-              <li><strong>Binary Matrix:</strong> You can physically toggle bits to 1 or 0 by clicking on them. The Results calculate instantly! Purple/Blue bits represent the <strong>Network Mask</strong> while grey segments represent the remaining host bounds.</li>
+              <li><strong>Binary Matrix:</strong> You can physically toggle bits to 1 or 0 by clicking on them. The Results calculate instantly! Purple/Blue bits represent the <strong>Network Mask</strong> while red segments represent the remaining host bounds.</li>
             </ul>
           </section>
 

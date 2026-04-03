@@ -34,17 +34,17 @@ export const BinaryMatrix: React.FC<BinaryMatrixProps> = ({ bits, cidr, onToggle
                     className={`
                       flex-1 w-full max-w-[36px] min-w-[20px] h-10 sm:h-12 rounded flex items-center justify-center text-sm sm:text-base lg:text-lg font-bold font-mono transition-all duration-200
                       hover:-translate-y-1 active:translate-y-0
-                      ${isNetwork ? 'border-b-2 border-blue-500' : 'border-b-2 border-slate-600'}
+                      ${isNetwork ? 'border-b-2 border-blue-500' : 'border-b-2 border-red-900'}
                       ${value === 1 
-                        ? (isNetwork ? 'bg-blue-600/20 text-blue-400 shadow-[0_0_12px_rgba(0,123,255,0.4)]' : 'bg-slate-700 text-slate-100') 
-                        : 'bg-slate-800 text-slate-500 hover:bg-slate-700'}
+                        ? (isNetwork ? 'bg-blue-600/20 text-blue-400 shadow-[0_0_12px_rgba(0,123,255,0.4)]' : 'bg-red-600/20 text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.4)]') 
+                        : (isNetwork ? 'bg-slate-800 text-slate-500 hover:bg-slate-700' : 'bg-red-950/30 text-red-900 hover:bg-red-900/40')}
                     `}
                     title={`Toggle Bit ${globalIndex}`}
                   >
                     {value}
                   </button>
                   {/* Subtle indicator for network vs host */}
-                  <div className={`h-1 w-full mt-2 rounded-full transition-colors ${isNetwork ? 'bg-blue-500' : 'bg-slate-600'}`} />
+                  <div className={`h-1 w-full mt-2 rounded-full transition-colors ${isNetwork ? 'bg-blue-500' : 'bg-red-900'}`} />
                 </div>
               );
             })}
