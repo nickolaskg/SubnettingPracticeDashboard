@@ -115,7 +115,7 @@ export const Dashboard: React.FC = () => {
 
         {/* Practice Validation */}
         <section>
-          <ValidationZone calc={activeCalc} />
+          <ValidationZone key={activeQuestion ? activeQuestion.id : 'calc'} calc={activeCalc} />
         </section>
         
       </div>

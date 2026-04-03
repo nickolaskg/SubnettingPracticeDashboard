@@ -13,6 +13,7 @@ export interface SubnetCalculations {
   magicNumberOctet: number; // 1-indexed (1, 2, 3, or 4)
   ipClass: 'A' | 'B' | 'C' | 'D/E';
   minCidr: number;
+  cidr: number;
 }
 
 export function bitsToOctets(bits: Bit[]): number[] {
@@ -113,7 +114,8 @@ export function calculateSubnetDetails(bits: Bit[], cidr: number): SubnetCalcula
     magicNumber,
     magicNumberOctet,
     ipClass,
-    minCidr
+    minCidr,
+    cidr
   };
 }
 

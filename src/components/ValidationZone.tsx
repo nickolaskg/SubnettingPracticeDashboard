@@ -123,7 +123,11 @@ export const ValidationZone: React.FC<ValidationZoneProps> = ({ calc }) => {
       </div>
 
       {showAnswers && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-900/50 border border-slate-700/50 rounded-lg mt-2 font-mono text-sm">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-slate-900/50 border border-slate-700/50 rounded-lg mt-2 font-mono text-sm">
+          <div>
+            <span className="text-slate-500 block text-xs uppercase mb-1">Prefix</span>
+            <span className="text-emerald-400">/{calc.cidr}</span>
+          </div>
           <div>
             <span className="text-slate-500 block text-xs uppercase mb-1">Network</span>
             <span className="text-emerald-400">{calc.networkString}</span>
