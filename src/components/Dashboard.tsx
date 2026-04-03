@@ -115,18 +115,22 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center items-center bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl relative overflow-hidden group">
-            <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
-            <h2 className="text-slate-400 font-semibold mb-2 uppercase tracking-widest text-sm text-center flex items-center justify-center">
-              Magic Number
-              <InfoTooltip content="Also known as the block size. It is calculated as 256 minus the interesting subnet mask octet. It dictates the multiple by which each subnet increments." />
-            </h2>
-            <div className="text-6xl font-black font-mono text-blue-500 drop-shadow-[0_0_20px_rgba(0,123,255,0.4)] my-1 transition-transform group-hover:scale-105 duration-300">
-              {calc.magicNumber}
+          <div className="flex flex-col justify-center items-center bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl relative group">
+            <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+              <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
             </div>
-            <p className="text-slate-400 mt-2 text-xs text-center font-medium bg-slate-900/50 px-4 py-1.5 rounded-full border border-slate-700/50">
-              Block Size in Octet <strong className="text-slate-200 ml-1">{calc.magicNumberOctet}</strong>
-            </p>
+            <div className="relative z-10 flex flex-col items-center w-full">
+              <h2 className="text-slate-400 font-semibold mb-2 uppercase tracking-widest text-sm text-center flex items-center justify-center">
+                Magic Number
+                <InfoTooltip content="Also known as the block size. It is calculated as 256 minus the interesting subnet mask octet. It dictates the multiple by which each subnet increments." />
+              </h2>
+              <div className="text-6xl font-black font-mono text-blue-500 drop-shadow-[0_0_20px_rgba(0,123,255,0.4)] my-1 transition-transform group-hover:scale-105 duration-300">
+                {calc.magicNumber}
+              </div>
+              <p className="text-slate-400 mt-2 text-xs text-center font-medium bg-slate-900/50 px-4 py-1.5 rounded-full border border-slate-700/50">
+                Block Size in Octet <strong className="text-slate-200 ml-1">{calc.magicNumberOctet}</strong>
+              </p>
+            </div>
           </div>
         </section>
 
@@ -150,9 +154,6 @@ export const Dashboard: React.FC = () => {
 
         {/* Practice Validation */}
         <section className="relative">
-          <div className="absolute top-6 right-6 z-10">
-            <InfoTooltip content="Type in the exact expected answers to practice your math. If a question is active, this checks against the question instead of the dashboard!" />
-          </div>
           <ValidationZone key={activeQuestion ? activeQuestion.id : 'calc'} calc={activeCalc} />
         </section>
         

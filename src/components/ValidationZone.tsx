@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { SubnetCalculations } from '../hooks/useSubnetLogic';
 import { CheckCircle2, XCircle } from 'lucide-react';
+import { InfoTooltip } from './InfoTooltip';
 
 interface ValidationZoneProps {
   calc: SubnetCalculations;
@@ -55,7 +56,10 @@ export const ValidationZone: React.FC<ValidationZoneProps> = ({ calc }) => {
   return (
     <div className="flex flex-col gap-6 p-6 bg-slate-800 rounded-xl border border-slate-700 shadow-xl w-full">
       <div className="flex justify-between items-center border-b border-slate-700 pb-4">
-        <h3 className="text-xl font-bold text-slate-100">Validation Practice Zone</h3>
+        <h3 className="text-xl font-bold text-slate-100 flex items-center">
+          Validation Practice Zone
+          <InfoTooltip content="Type in the exact expected answers to practice your math. If a question is active, this checks against the question instead of the dashboard!" />
+        </h3>
         <button 
           onClick={handleClear}
           className="text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-200 bg-slate-900 hover:bg-slate-700 px-3 py-1.5 rounded transition-colors"
