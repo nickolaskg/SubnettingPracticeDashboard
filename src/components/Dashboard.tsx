@@ -5,18 +5,30 @@ import { BinaryMatrix } from './BinaryMatrix';
 import { CidrSlider } from './CidrSlider';
 import { ValidationZone } from './ValidationZone';
 import { QuestionComponent } from './QuestionComponent';
-import { Network, RefreshCw } from 'lucide-react';
+import { HelpModal } from './HelpModal';
+import { InfoTooltip } from './InfoTooltip';
+import { Network, RefreshCw, HelpCircle } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
   const { bits, cidr, setCidr, toggleBit, setIpFromString, reset, calc } = useSubnetLogic();
   const { activeQuestion, generateNewQuestion, clearQuestion } = useQuestionGenerator();
 
   const [ipInput, setIpInput] = useState(calc.ipString);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   // Sync internal IP input when bits change externally (e.g. from matrix)
   useEffect(() => {
     setIpInput(calc.ipString);
   }, [calc.ipString]);
+
+  // Sync the IP automatically when a new question is actively loaded
+  useEffect(() => {
+    if (activeQuestion) {
+      setIpFromString(activeQuestion.expectedCalc.ipString);
+    }
+    // We intentionally don't want to re-run this if setIpFromString changes, only on question change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeQuestion]);
 
   const handleIpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -28,6 +40,8 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-3 md:p-6 font-sans selection:bg-blue-500/30">
+      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+      
       <div className="max-w-6xl mx-auto space-y-5">
         
         {/* Header */}
@@ -47,13 +61,22 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
           
-          <button
-            onClick={reset}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg text-sm font-bold transition-all hover:shadow-lg active:scale-95 relative z-10 text-slate-200"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Reset
-          </button>
+          <div className="flex items-center gap-3 relative z-10">
+            <button
+              onClick={() => setIsHelpOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-sm font-bold transition-all hover:shadow-lg active:scale-95 text-blue-400"
+            >
+              <HelpCircle className="w-4 h-4" />
+              How to Use
+            </button>
+            <button
+              onClick={reset}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg text-sm font-bold transition-all hover:shadow-lg active:scale-95 text-slate-200"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Reset
+            </button>
+          </div>
         </header>
 
         {/* Practice Question Generator */}
@@ -68,7 +91,10 @@ export const Dashboard: React.FC = () => {
         {/* Real-time Result Overview */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 flex flex-col items-center justify-center bg-gradient-to-b from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-            <h2 className="text-slate-400 font-semibold mb-3 uppercase tracking-widest text-sm">Target IP Address</h2>
+            <h2 className="text-slate-400 font-semibold mb-3 uppercase tracking-widest text-sm flex items-center">
+              Target IP Address
+              <InfoTooltip content="Manually type an IP address here. The visual matrix and calculator will instantly update based on the class of this address." />
+            </h2>
             
             <div className="flex items-center gap-3 w-full justify-center">
               <input 
@@ -91,8 +117,9 @@ export const Dashboard: React.FC = () => {
 
           <div className="flex flex-col justify-center items-center bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl relative overflow-hidden group">
             <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
-            <h2 className="text-slate-400 font-semibold mb-2 uppercase tracking-widest text-sm text-center">
+            <h2 className="text-slate-400 font-semibold mb-2 uppercase tracking-widest text-sm text-center flex items-center justify-center">
               Magic Number
+              <InfoTooltip content="Also known as the block size. It is calculated as 256 minus the interesting subnet mask octet. It dictates the multiple by which each subnet increments." />
             </h2>
             <div className="text-6xl font-black font-mono text-blue-500 drop-shadow-[0_0_20px_rgba(0,123,255,0.4)] my-1 transition-transform group-hover:scale-105 duration-300">
               {calc.magicNumber}
@@ -105,16 +132,27 @@ export const Dashboard: React.FC = () => {
 
         {/* Interactive Components */}
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div className="xl:col-span-2">
+          <div className="xl:col-span-2 relative">
+            <div className="absolute top-4 right-4 z-10 flex">
+              <InfoTooltip content="Click individual bits to toggle. Purple bits represent the Network portion dictated by your prefix length. Gray/white bits represent hosts." />
+            </div>
             <BinaryMatrix bits={bits} cidr={cidr} onToggle={toggleBit} />
           </div>
-          <div className="xl:col-span-1 h-full flex">
-            <CidrSlider cidr={cidr} minCidr={calc.minCidr} onChange={setCidr} />
+          <div className="xl:col-span-1 h-full flex relative">
+            <div className="absolute top-4 right-4 z-10 hidden xl:flex">
+              <InfoTooltip content="Slide to adjust the subnet mask length. It is constrained so you cannot drop below the standard defined by the IP's class." />
+            </div>
+            <div className="w-full h-full flex">
+              <CidrSlider cidr={cidr} minCidr={calc.minCidr} onChange={setCidr} />
+            </div>
           </div>
         </section>
 
         {/* Practice Validation */}
-        <section>
+        <section className="relative">
+          <div className="absolute top-6 right-6 z-10">
+            <InfoTooltip content="Type in the exact expected answers to practice your math. If a question is active, this checks against the question instead of the dashboard!" />
+          </div>
           <ValidationZone key={activeQuestion ? activeQuestion.id : 'calc'} calc={activeCalc} />
         </section>
         
